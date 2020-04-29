@@ -32,6 +32,9 @@ body {
 }
 .left .msgDisplay #msgList li {
   word-wrap: break-word;
+  margin: 5px;
+  font-size: 20px;
+  list-style: square;
 }
 .left .msgSend {
   position: absolute;

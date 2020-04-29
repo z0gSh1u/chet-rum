@@ -1,6 +1,3 @@
-// const UserListingWorker = new Worker('UserListingWorkder.js')
-const MessageListingWorker = new Worker('http://localhost:3000/js/MessageListingWorker.js')
-
 // Block here to get username.
 if (!sessionStorage.getItem('chet-rum-username')) {
   let username
@@ -9,8 +6,10 @@ if (!sessionStorage.getItem('chet-rum-username')) {
 }
 
 // WebSocket link.
-const sio = io('http://localhost:3000')
+const SERVER_URL = 'http://localhost:3000'
+const sio = io(SERVER_URL)
 sio.on('connect', () => {
+  // Login.
   sio.emit('newJoin', { username: sessionStorage.getItem('chet-rum-username') })
   document.getElementById('msgSendBtn').onclick = function () {
     let content = document.getElementById('msgInput').value
@@ -18,13 +17,25 @@ sio.on('connect', () => {
       sio.emit('newMsg', { username: sessionStorage.getItem('chet-rum-username'), content })
     }
   }
-
-  console.log("posted")
-  MessageListingWorker.postMessage('sio')
-
-  // sio.on('broadcastMsg', ({username, content}) => {
-  //   let newLi = document.createElement('li')
-  //   newLi.innerHTML = `[${username}]: ${content}`
-  //   document.getElementById('msgList').appendChild(newLi)
-  // })
+  // Update DOM when new message comes.
+  sio.on('broadcastMsg', ({ username, content }) => {
+    let newLi = document.createElement('li')
+    // Avoid XSS.
+    newLi.innerText = `[${username}]: ${content}`
+    document.getElementById('msgList').appendChild(newLi)
+  })
+  // Update DOM for initial user list.
+  sio.on('initUserList', users => {
+    users.forEach(user => {
+      let newLi = document.createElement('li')
+      newLi.innerText = `${user}`
+      document.getElementById('userList').appendChild(newLi)
+    })
+  })
+  // Update DOM for other user's join.
+  sio.on('newUserJoin', username => {
+    let newLi = document.createElement('li')
+    newLi.innerText = `${username}`
+    document.getElementById('userList').appendChild(newLi)
+  })
 })

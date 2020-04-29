@@ -29,7 +29,12 @@ sio.on('connection', socket => {
     if (!found) {
       userSockets.push({ username, socket })
       console.log('[newJoin] New user: ' + username)
+      // Tell other clients new user's name.
+      socket.broadcast.emit('newUserJoin', username)
     }
+    // Tell this client current users.
+    let currentUsers = userSockets.map(v => v.username)
+    socket.emit('initUserList', currentUsers)
   })
 
   /**
@@ -37,7 +42,9 @@ sio.on('connection', socket => {
    */
   socket.on('newMsg', ({ username, content }) => {
     sio.emit('broadcastMsg', { username, content })
+    console.log('[newMsg] Broadcast.')
   })
+
 })
 
 /**
