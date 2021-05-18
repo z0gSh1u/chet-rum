@@ -1,6 +1,6 @@
 # chet-rum
 
-<p align="center"><img src="https://i.loli.net/2021/01/25/puxYZ2rwLbX5h6a.png"></img></p>
+<p align="center"><img src="https://z3.ax1x.com/2021/05/18/ghLWHf.png"></img></p>
 
 这是一个简单的基于 Node.js 和 WebSocket (Socket.io) 的**多对多聊天室**实现。
 
